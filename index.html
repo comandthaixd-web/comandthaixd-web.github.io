@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>กราฟพาราโบลา Interactive</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    input { width: 60px; padding: 5px; margin: 5px; }
+    canvas { max-width: 700px; margin-top: 30px; text-align: center; padding: 20px; font-family: sans-serif;}
+  </style>
+</head>
+<body>
+  <h2 class="h1">กราฟพาราโบลา: y = ax² + bx + c</h2>
+
+  <div>
+    <label id="LA">a: <input type="number" id="a" value="1" step="1"></label>
+    <label id="LA">b: <input type="number" id="b" value="0" step="1"></label>
+    <label id="LA">c: <input type="number" id="c" value="0" step="1"></label>
+    <button class="btn" , onclick="updateChart()">วาดกราฟ</button>
+  </div>
+
+  <canvas id="parabolaChart", class="Chart"></canvas>
+
+  <script>
+    let chart;
+
+    function generateData(a, b, c) {
+      const xValues = [];
+      const yValues = [];
+      for (let x = -5; x <= 5; x += 0.5) {
+        xValues.push(x.toFixed(2));
+        const y = a * x * x + b * x + c;
+        yValues.push(y.toFixed(2)); 
+      }
+      return { xValues, yValues };
+    }
+
+    function updateChart() {
+      const a = parseFloat(document.getElementById('a').value);
+      const b = parseFloat(document.getElementById('b').value);
+      const c = parseFloat(document.getElementById('c').value);
+      const { xValues, yValues } = generateData(a, b, c);
+
+      const data = {
+        labels: xValues,
+        datasets: [{
+          label: `y = ${a}x² + ${b}x + ${c}`,
+          data: yValues,
+          borderColor: 'blue',
+          fill: false,
+          pointRadius: 0,
+          tension: 0.1
+        }]
+      };
+
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              title: { display: true, text: 'x' }
+            },
+            y: {
+              title: { display: true, text: 'y' }
+            }
+          }
+        }
+      };
+
+      if (chart) {
+        chart.destroy(); // ลบกราฟเก่า
+      }
+      const ctx = document.getElementById('parabolaChart').getContext('2d');
+      chart = new Chart(ctx, config);
+    }
+
+    // วาดกราฟเริ่มต้น
+    updateChart();
+  </script>
+</body>
+</html>
